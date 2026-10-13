@@ -1,0 +1,65 @@
+{
+  "name": "@sitetus/collector",
+  "version": "0.1.3",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://sitetus.com",
+  "description": "Sitetus collector for Node.js projects: answers the panel's signed pull with a read-only inventory and health envelope (Level 1).",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "sitetus-collector": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pretest": "npm run build && tsc -p tsconfig.test.json",
+    "test": "node --test .test-build/test/*.test.js",
+    "fixture": "npm run pretest && node .test-build/examples/express/make-fixture.js",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "sitetus",
+    "collector",
+    "monitoring",
+    "inventory",
+    "ed25519"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetus/collector-node.git"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.25",
+    "@types/node": "^20.19.43",
+    "express": "^4.22.3",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

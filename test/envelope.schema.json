@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Derived from the panel's envelope validation: bounded strings ≤200 bytes, npm name pattern, health detail ≤20 scalars, keys [a-z0-9_], runtime/framework/meta ≤8 KB and depth ≤5. The checks a JSON schema cannot express (section byte size, control characters in bounded trees) live in test/schema.ts.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "collector", "project_key", "mode", "level"],
+  "properties": {
+    "schema_version": { "enum": [1] },
+    "generated_at": { "$ref": "#/definitions/boundedString" },
+    "project_key": { "$ref": "#/definitions/boundedString" },
+    "mode": { "enum": ["monitor"] },
+    "level": { "enum": [1, 2] },
+    "collector": {
+      "type": "object",
+      "required": ["name", "version", "lang", "file_hash"],
+      "properties": {
+        "name": { "$ref": "#/definitions/boundedString" },
+        "version": { "$ref": "#/definitions/boundedString" },
+        "lang": { "$ref": "#/definitions/boundedString" },
+        "file_hash": { "$ref": "#/definitions/boundedString" }
+      }
+    },
+    "runtime": { "$ref": "#/definitions/boundedTree" },
+    "framework": {
+      "allOf": [
+        { "$ref": "#/definitions/boundedTree" },
+        {
+          "type": "object",
+          "required": ["detected"],
+          "properties": {
+            "detected": { "enum": ["nextjs", "nuxt", "remix", "sveltekit", "astro", "nestjs", "hono", "fastify", "koa", "express", "unknown"] }
+          }
+        }
+      ]
+    },
+    "meta": {
+      "allOf": [
+        { "$ref": "#/definitions/boundedTree" },
+        {
+          "type": "object",
+          "properties": {
+            "duration_ms": { "type": "integer", "minimum": 0 },
+            "root_path_source": { "enum": ["default", "discovered", "override"] },
+            "warnings": { "type": "array", "maxItems": 60, "items": { "type": "string", "pattern": "^msg\\.[a-z_]{1,64}$" } }
+          }
+        }
+      ]
+    },
+    "packages": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "ecosystem": { "enum": ["npm"] },
+        "source": { "enum": ["package-lock.json", "yarn.lock", "pnpm-lock.yaml", "package.json"] },
+        "lock_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "dev_installed": { "type": "boolean" },
+        "items": {
+          "type": "array",
+          "maxItems": 5000,
+          "items": {
+            "type": "object",
+            "required": ["name", "version"],
+            "properties": {
+              "name": { "type": "string", "pattern": "^(@[a-z0-9][a-z0-9._-]{0,213}/)?[a-z0-9][a-z0-9._-]{0,213}$", "maxLength": 200 },
+              "version": { "$ref": "#/definitions/boundedString" },
+              "dev": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "health": {
+      "type": "object",
+      "required": ["checks"],
+      "properties": {
+        "checks": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "required": ["id", "status"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9_]{1,64}$" },
+              "status": { "enum": ["ok", "warn", "fail", "unknown"] },
+              "value": { "type": ["number", "boolean", "string"], "maxLength": 200 },
+              "unit": { "$ref": "#/definitions/boundedString" },
+              "message": { "type": "string", "pattern": "^msg\\.[a-z_]{1,64}$" },
+              "detail": {
+                "type": "object",
+                "maxProperties": 20,
+                "propertyNames": { "pattern": "^[a-z0-9_]{1,64}$" },
+                "additionalProperties": { "type": ["number", "boolean", "string"], "maxLength": 200 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "custom_checks": { "type": "array", "maxItems": 25 },
+    "modules": { "type": "object" }
+  },
+  "definitions": {
+    "boundedString": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "boundedTree": {
+      "type": "object",
+      "maxProperties": 60,
+      "propertyNames": { "pattern": "^[a-z0-9_]{1,40}$" },
+      "additionalProperties": { "$ref": "#/definitions/boundedValue" }
+    },
+    "boundedValue": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "boolean" },
+        { "type": "number" },
+        { "type": "string", "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]*$" },
+        { "type": "array", "maxItems": 60, "items": { "$ref": "#/definitions/boundedValue" } },
+        { "$ref": "#/definitions/boundedTree" }
+      ]
+    }
+  }
+}

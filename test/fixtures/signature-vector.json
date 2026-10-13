@@ -1,0 +1,14 @@
+{
+    "algo": "ed25519",
+    "seed_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+    "public_key_b64": "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w=",
+    "secret_key_b64": "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGKiOPddAnxlf1S2y08ul1yymcJvx2UEhvzdIgBtA9vXA==",
+    "method": "GET",
+    "path": "/sitetus-vector0000/",
+    "project_key": "vectorprojectkey1234",
+    "timestamp": "1757000000",
+    "nonce": "00112233445566778899aabbccddeeff",
+    "body": "",
+    "material_sha256": "d0b5bc306080630c8836abda0ebe5f5aa75942bf4d72b2b59eecbb16ac3d4ba0",
+    "signature_b64": "7ZibQZlI/nUSZHvLZan7cki0yIWkVVzYGtgpbIqO6cMzIXgZqcUmiYT48DwuCHcfM2jkOQusCzZVNmdxtcetAA=="
+}

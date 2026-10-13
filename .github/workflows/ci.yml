@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The token can read the repository and nothing else.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build and test
+        run: npm test
+
+      - name: Pack
+        run: npm pack --dry-run
+
+      - name: Report build hash
+        run: |
+          HASH=$(sha256sum dist/index.js | cut -d' ' -f1)
+          echo "dist/index.js sha256: $HASH"
+          echo "### dist/index.js" >> "$GITHUB_STEP_SUMMARY"
+          echo "SHA-256: \`$HASH\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload tarball
+        if: matrix.node == '22'
+        run: npm pack
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.node == '22'
+        with:
+          name: sitetus-collector-tgz
+          path: '*.tgz'

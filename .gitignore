@@ -1,0 +1,9 @@
+/node_modules/
+/dist/
+/.test-build/
+/sitetus.collector.json
+/sitetus.manifest.json
+/.sitetus-*.json
+/examples/**/sitetus.collector.json
+/examples/**/sitetus.manifest.json
+*.tgz

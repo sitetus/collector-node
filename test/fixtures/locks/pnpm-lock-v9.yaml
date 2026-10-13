@@ -1,0 +1,43 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      hono:
+        specifier: ^4.4.0
+        version: 4.4.6
+    devDependencies:
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.14.2)
+
+packages:
+
+  '@types/node@20.14.2':
+    resolution: {integrity: sha512-a}
+
+  hono@4.4.6:
+    resolution: {integrity: sha512-b}
+    engines: {node: '>=16.0.0'}
+
+  vitest@1.6.0:
+    resolution: {integrity: sha512-c}
+    hasBin: true
+
+  '@scope/pkg@1.0.0':
+    resolution: {integrity: sha512-d}
+
+snapshots:
+
+  '@types/node@20.14.2': {}
+
+  hono@4.4.6: {}
+
+  vitest@1.6.0(@types/node@20.14.2):
+    dependencies:
+      '@types/node': 20.14.2
